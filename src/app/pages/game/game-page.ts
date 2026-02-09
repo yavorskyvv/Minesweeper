@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  OnDestroy,
+  OnInit,
   ViewChild,
   computed,
   effect,
@@ -88,7 +90,7 @@ const WHEEL_ZOOM_SENSITIVITY = 0.0015;
     `,
   ],
 })
-export class GamePageComponent {
+export class GamePageComponent implements OnInit, OnDestroy {
   private readonly store = inject(MinesweeperStore);
 
   @ViewChild('viewport', { static: true })
@@ -126,6 +128,13 @@ export class GamePageComponent {
     worldY: number;
   } | null = null;
   private fitFrameId: number | null = null;
+  private globalListenersAbortController: AbortController | null = null;
+  private readonly globalPointerUpHandler = (event: PointerEvent) => {
+    if (this.pointerId === null && this.activePointers.size === 0) {
+      return;
+    }
+    this.onPointerUp(event);
+  };
 
   constructor() {
     effect(() => {
@@ -136,6 +145,19 @@ export class GamePageComponent {
         this.scheduleFit();
       }
     });
+  }
+
+  ngOnInit() {
+    this.globalListenersAbortController = new AbortController();
+    const signal = this.globalListenersAbortController.signal;
+
+    window.addEventListener('pointerup', this.globalPointerUpHandler, { signal });
+    window.addEventListener('pointercancel', this.globalPointerUpHandler, { signal });
+  }
+
+  ngOnDestroy() {
+    this.globalListenersAbortController?.abort();
+    this.globalListenersAbortController = null;
   }
 
   onPointerDown(event: PointerEvent) {
@@ -218,9 +240,13 @@ export class GamePageComponent {
       event.preventDefault();
     }
 
-    const target = event.currentTarget as HTMLElement;
-    if (target.hasPointerCapture(event.pointerId)) {
-      target.releasePointerCapture(event.pointerId);
+    const viewport = this.viewportRef?.nativeElement;
+    const hasPointerCapture =
+      viewport &&
+      'hasPointerCapture' in viewport &&
+      typeof viewport.hasPointerCapture === 'function';
+    if (hasPointerCapture && viewport.hasPointerCapture(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId);
     }
 
     this.pointerId = null;
