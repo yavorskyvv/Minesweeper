@@ -26,18 +26,10 @@ describe('GamePageComponent', () => {
     expect(compiled.querySelector('[data-testid="field-viewport"]')).toBeTruthy();
   });
 
-  it('should stop panning when pointer is released outside the viewport', () => {
-    const fixture = TestBed.createComponent(GamePageComponent);
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    const viewport = compiled.querySelector('[data-testid="field-viewport"]') as HTMLElement;
-
+  function startPanning(viewport: HTMLElement): void {
     // jsdom does not implement pointer capture APIs, so we stub them.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (viewport as any).setPointerCapture = vi.fn();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (viewport as any).releasePointerCapture = vi.fn();
+    (viewport as unknown as { setPointerCapture: () => void }).setPointerCapture = vi.fn();
+    (viewport as unknown as { releasePointerCapture: () => void }).releasePointerCapture = vi.fn();
 
     viewport.dispatchEvent(
       new PointerEvent('pointerdown', {
@@ -57,18 +49,51 @@ describe('GamePageComponent', () => {
         bubbles: true,
       }),
     );
+  }
 
+  it('should set isPanning to true after drag past threshold and keep it until release', () => {
+    const fixture = TestBed.createComponent(GamePageComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const viewport = compiled.querySelector('[data-testid="field-viewport"]') as HTMLElement;
     const component = fixture.componentInstance;
+
+    startPanning(viewport);
+
     expect(component.isPanning()).toBe(true);
 
-    window.dispatchEvent(
-      new PointerEvent('pointerup', {
-        pointerId: 1,
-        bubbles: true,
-      }),
-    );
+    // No pointerup dispatched – panning must still be true (avoids false positive)
+    expect(component.isPanning()).toBe(true);
+  });
+
+  it('should stop panning when pointer is released on the viewport', () => {
+    const fixture = TestBed.createComponent(GamePageComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const viewport = compiled.querySelector('[data-testid="field-viewport"]') as HTMLElement;
+    const component = fixture.componentInstance;
+
+    startPanning(viewport);
+    expect(component.isPanning()).toBe(true);
+
+    viewport.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, bubbles: true }));
+
+    expect(component.isPanning()).toBe(false);
+  });
+
+  it('should stop panning when pointer is released outside the viewport (window)', () => {
+    const fixture = TestBed.createComponent(GamePageComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const viewport = compiled.querySelector('[data-testid="field-viewport"]') as HTMLElement;
+    const component = fixture.componentInstance;
+
+    startPanning(viewport);
+    expect(component.isPanning()).toBe(true);
+
+    // Simulate release outside viewport: only window listeners receive this
+    window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, bubbles: true }));
 
     expect(component.isPanning()).toBe(false);
   });
 });
-
