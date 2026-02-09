@@ -1,0 +1,29 @@
+<button
+  class="minesweeper-cell"
+  type="button"
+  appCellAnimation
+  [delayMs]="delayMs()"
+  [isGameWon]="isGameWon()"
+  [row]="state().i"
+  [col]="state().j"
+  [gridWidth]="gridWidth()"
+  [gridHeight]="gridHeight()"
+  [attr.id]="'cell-' + state().i + '-' + state().j"
+  [attr.tabindex]="tabIndex()"
+  [class.flagged]="!state().isRevealed && !isGameOver() && state().isFlagged"
+  [class.revealed]="state().isRevealed || isGameOver()"
+  [class.mine]="isGameOver() && state().isMine"
+  [class.game-won]="isGameWon()"
+  (click)="cellClick.emit()"
+  (contextmenu)="$event.preventDefault(); cellFlag.emit()"
+  (focus)="cellFocus.emit()"
+  (keydown)="cellKey.emit($event)"
+>
+  @if (isGameOver() && state().isMine) {
+    <span class="ms-icon ms-icon--mine ms-appear" aria-hidden="true">explosion</span>
+  } @else if (state().isRevealed && state().adjacentMines) {
+    <span class="ms-number ms-appear">{{ state().adjacentMines }}</span>
+  } @else if (state().isFlagged) {
+    <span class="ms-icon ms-icon--flag ms-appear" aria-hidden="true">flag</span>
+  }
+</button>

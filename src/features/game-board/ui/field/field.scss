@@ -1,0 +1,10 @@
+:host {
+  display: inline-block;
+}
+
+.minesweeper-field {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 10), 2rem);
+  grid-template-rows: repeat(var(--rows, 10), 2rem);
+  gap: 4px;
+}

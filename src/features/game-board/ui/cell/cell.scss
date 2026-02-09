@@ -1,0 +1,136 @@
+.minesweeper-cell {
+  --elevation-offset: 0;
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--ms-border);
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-family: inherit;
+  font-synthesis: weight;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(var(--elevation-offset));
+  transition:
+    transform 0.3s ease-in-out var(--transition-delay, 0s),
+    background-color 0.3s ease-in-out var(--transition-delay, 0s),
+    box-shadow 0.3s ease-in-out var(--transition-delay, 0s);
+  box-shadow: 0 var(--ms-elevation) 0 0 var(--ms-shadow);
+  color: var(--ms-text);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    --elevation-offset: var(--ms-elevation-focus-offset);
+    outline: none;
+    transition-delay: 0s;
+    box-shadow: 0 var(--ms-elevation-focus) 0 0 var(--ms-shadow);
+  }
+
+  &.flagged {
+    --elevation-offset: var(--ms-elevation-flagged-offset);
+    transition-delay: 0s;
+    box-shadow: 0 var(--ms-elevation-flagged) 0 0 var(--ms-shadow);
+  }
+
+  &.revealed {
+    --elevation-offset: var(--ms-elevation);
+    cursor: default;
+    background-color: var(--ms-bg-revealed);
+    color: var(--ms-text-revealed);
+    box-shadow:
+      0 0 0 0 var(--ms-shadow),
+      inset 0 var(--ms-elevation-inset) 0 0 var(--ms-shadow);
+  }
+
+  &.revealed:focus-visible {
+    transition-delay: 0s;
+    box-shadow:
+      0 0 0 var(--ms-focus-ring) var(--ms-border),
+      0 0 0 0 var(--ms-shadow),
+      inset 0 var(--ms-elevation-inset) 0 0 var(--ms-shadow);
+  }
+
+  &:not(.mine).revealed {
+    color: var(--ms-number);
+    font-weight: 700;
+  }
+
+  &.mine {
+    background-color: var(--ms-bg-mine);
+  }
+
+  &.mine.revealed {
+    background-color: var(--ms-bg-mine-revealed);
+    box-shadow:
+      0 0 0 0 var(--ms-shadow),
+      inset 0 var(--ms-elevation-inset) 0 0 var(--ms-bg-mine-revealed);
+  }
+
+  &.game-won {
+    animation: msWinLift 0.25s ease-out;
+    animation-delay: var(--win-wave-delay, 0s);
+  }
+}
+
+@keyframes msFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ms-appear {
+  opacity: 0;
+  animation: msFadeIn 0.1s ease-in-out;
+  animation-delay: var(--transition-delay, 0s);
+  animation-fill-mode: forwards;
+}
+
+.minesweeper-cell:not(.revealed) .ms-appear {
+  animation-delay: 0.1s;
+}
+
+@keyframes msWinLift {
+  0% {
+    transform: translateY(var(--elevation-offset));
+  }
+  50% {
+    transform: translateY(calc(var(--elevation-offset) - 4px));
+  }
+  100% {
+    transform: translateY(var(--elevation-offset));
+  }
+}
+
+.ms-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Material Symbols Rounded';
+  font-size: 1.1rem;
+  line-height: 1;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+.ms-number {
+  display: inline-block;
+}
+
+.ms-icon--mine {
+  color: var(--ms-icon-mine);
+}
+
+.ms-icon--flag {
+  color: var(--ms-icon-flag);
+}

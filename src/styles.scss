@@ -1,1 +1,66 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --ms-bg-app: #f4ede3;
+  --ms-elevation: 5px;
+  --ms-elevation-inset: 3px;
+  --ms-elevation-focus: 7px;
+  --ms-elevation-focus-offset: calc(var(--ms-elevation) - var(--ms-elevation-focus));
+
+  --ms-elevation-flagged: 8px;
+  --ms-elevation-flagged-offset: calc(var(--ms-elevation) - var(--ms-elevation-flagged));
+  --ms-focus-ring: 2px;
+  --ms-border: #d6c7b8;
+  --ms-shadow: #c8b5a3;
+  --ms-bg-revealed: #f3e9dd;
+  --ms-bg-mine: #d6a59b;
+  --ms-bg-mine-revealed: #c18b7a;
+  --ms-icon-mine: #5b3f35;
+  --ms-icon-flag: #5f7a64;
+  --ms-number: #6b4f3f;
+  --ms-text: #3a2d25;
+  --ms-text-revealed: #2f241f;
+}
+
+:root[data-palette='arcade'] {
+  --ms-bg-app: #f8fafc;
+  --ms-elevation: 5px;
+  --ms-elevation-inset: 3px;
+
+  --ms-elevation-focus: 7px;
+  --ms-elevation-focus-offset: calc(var(--ms-elevation) - var(--ms-elevation-focus));
+
+  --ms-elevation-flagged: 8px;
+  --ms-elevation-flagged-offset: calc(var(--ms-elevation) - var(--ms-elevation-flagged));
+  --ms-border: lightblue;
+  --ms-shadow: lightblue;
+  --ms-bg-revealed: lightgreen;
+  --ms-bg-mine: fuchsia;
+  --ms-bg-mine-revealed: chocolate;
+  --ms-icon-mine: #b91c1c;
+  --ms-icon-flag: #2563eb;
+  --ms-number: #c8c7d3;
+  --ms-text: #1f2937;
+  --ms-text-revealed: #0f172a;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Bagel Fat One', system-ui, sans-serif;
+  font-size: 16px;
+  background-color: var(--ms-bg-app);
+  color: var(--ms-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+app-root {
+  display: block;
+}
