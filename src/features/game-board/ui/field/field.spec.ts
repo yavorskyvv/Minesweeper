@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FieldComponent } from './field';
 
 describe('FieldComponent', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [FieldComponent],
-    });
+      imports: [FieldComponent],
+    }).compileComponents();
   });
 
   it('should create the component', () => {

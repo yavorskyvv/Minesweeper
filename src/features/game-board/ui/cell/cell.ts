@@ -31,8 +31,8 @@ export class CellComponent {
     const row = this.state().i;
     const column = this.state().j;
 
-    const originRow = this.waveOrigin()?.i || row;
-    const originColumn = this.waveOrigin()?.j || column;
+    const originRow = this.waveOrigin()?.i ?? row;
+    const originColumn = this.waveOrigin()?.j ?? column;
 
     return (Math.abs(row - originRow) + Math.abs(column - originColumn)) * 100;
   });

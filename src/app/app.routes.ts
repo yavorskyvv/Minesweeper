@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { FieldComponent } from '../features/game-board/ui';
+import { GamePageComponent } from './pages/game/game-page';
 
 export const routes: Routes = [
   {
     path: '',
-    component: FieldComponent,
+    component: GamePageComponent,
   },
 ];

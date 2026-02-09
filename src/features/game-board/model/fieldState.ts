@@ -47,25 +47,51 @@ export const MinesweeperStore = signalStore(
         return;
       }
 
+      const newCells = triggerCell(store.cells(), i, j);
+
       patchState(store, {
-        cells: triggerCell(store.cells(), i, j),
+        cells: newCells,
       });
+      const isGameWon = checkIfGameWon(newCells);
+
+      if (isGameWon) {
+        patchState(store, {
+          gameState: 'GAME_WON',
+        });
+      }
     },
 
     flagCell: (i: number, j: number) => {
       const newCells = structuredClone(store.cells());
       newCells[i][j].isFlagged = !newCells[i][j].isFlagged;
-      const isAllMinesFlagged = checkifAllMinesFlagged(newCells);
+      const isGameWon = checkIfGameWon(newCells);
 
       patchState(store, {
         cells: newCells,
       });
 
-      if (isAllMinesFlagged) {
+      if (isGameWon) {
         patchState(store, {
           gameState: 'GAME_WON',
         });
       }
+    },
+
+    resetGame: () => {
+      patchState(store, {
+        gameState: 'IDLE',
+        cells: createEmptyField(store.width(), store.height()),
+      });
+    },
+
+    setConfig: (width: number, height: number, mines: number) => {
+      patchState(store, {
+        width,
+        height,
+        mines,
+        gameState: 'IDLE',
+        cells: createEmptyField(width, height),
+      });
     },
   })),
 );
@@ -113,7 +139,6 @@ function placeMines(field: CellState[][], mines: number, origin?: { i: number; j
     if (!field[row][column].isMine && !isOriginCell) {
       field[row][column].isMine = true;
       minesLeft--;
-      // increment adjacent mines for all cells around the mine
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (
@@ -185,7 +210,7 @@ function getAdjacentCells(cells: CellState[][], cell: CellState): CellState[] {
   return res;
 }
 
-function checkifAllMinesFlagged(cells: CellState[][]) {
+function checkIfGameWon(cells: CellState[][]) {
   return cells.every((cellRow) =>
     cellRow.every((cell) => (cell.isMine && cell.isFlagged) || cell.isRevealed),
   );
