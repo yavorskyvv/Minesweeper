@@ -11,77 +11,77 @@ import { CellComponent } from '../cell/cell';
 })
 export class FieldComponent {
   readonly store$ = inject(MinesweeperStore);
-  readonly waveOrigin = signal<{ i: number; j: number } | undefined>(undefined);
-  readonly focusedCell = signal<{ i: number; j: number }>({ i: 0, j: 0 });
+  readonly waveOrigin = signal<{ row: number; column: number } | undefined>(undefined);
+  readonly focusedCell = signal<{ row: number; column: number }>({ row: 0, column: 0 });
 
-  onCellClick(row: number, cell: number) {
-    this.store$.triggerCell(row, cell);
-    this.waveOrigin.set({ i: row, j: cell });
-    this.setFocus(row, cell);
+  onCellClick(row: number, column: number) {
+    this.store$.triggerCell(row, column);
+    this.waveOrigin.set({ row, column });
+    this.setFocus(row, column);
   }
-  onCellFlag(row: number, cell: number) {
-    this.store$.flagCell(row, cell);
-  }
-
-  setFocus(row: number, cell: number) {
-    this.focusedCell.set({ i: row, j: cell });
+  onCellFlag(row: number, column: number) {
+    this.store$.flagCell(row, column);
   }
 
-  isFocused(row: number, cell: number) {
+  setFocus(row: number, column: number) {
+    this.focusedCell.set({ row, column });
+  }
+
+  isFocused(row: number, column: number) {
     const focused = this.focusedCell();
-    return focused.i === row && focused.j === cell;
+    return focused.row === row && focused.column === column;
   }
 
-  onCellKey(row: number, cell: number, event: KeyboardEvent) {
+  onCellKey(row: number, column: number, event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
         event.stopPropagation();
-        this.moveFocus(row - 1, cell);
+        this.moveFocus(row - 1, column);
         break;
       case 'ArrowDown':
         event.preventDefault();
         event.stopPropagation();
-        this.moveFocus(row + 1, cell);
+        this.moveFocus(row + 1, column);
         break;
       case 'ArrowLeft':
         event.preventDefault();
         event.stopPropagation();
-        this.moveFocus(row, cell - 1);
+        this.moveFocus(row, column - 1);
         break;
       case 'ArrowRight':
         event.preventDefault();
         event.stopPropagation();
-        this.moveFocus(row, cell + 1);
+        this.moveFocus(row, column + 1);
         break;
       case 'Enter':
         event.preventDefault();
         event.stopPropagation();
-        this.onCellClick(row, cell);
+        this.onCellClick(row, column);
         break;
       case ' ':
       case 'Space':
       case 'Spacebar':
         event.preventDefault();
         event.stopPropagation();
-        this.onCellFlag(row, cell);
+        this.onCellFlag(row, column);
         break;
       default:
         break;
     }
   }
 
-  private moveFocus(row: number, cell: number) {
+  private moveFocus(row: number, column: number) {
     const maxRow = this.store$.height() - 1;
-    const maxCell = this.store$.width() - 1;
+    const maxColumn = this.store$.width() - 1;
     const nextRow = row < 0 ? maxRow : row > maxRow ? 0 : row;
-    const nextCell = cell < 0 ? maxCell : cell > maxCell ? 0 : cell;
-    this.setFocus(nextRow, nextCell);
-    queueMicrotask(() => this.focusCell(nextRow, nextCell));
+    const nextColumn = column < 0 ? maxColumn : column > maxColumn ? 0 : column;
+    this.setFocus(nextRow, nextColumn);
+    queueMicrotask(() => this.focusCell(nextRow, nextColumn));
   }
 
-  private focusCell(row: number, cell: number) {
-    const element = document.getElementById(`cell-${row}-${cell}`);
+  private focusCell(row: number, column: number) {
+    const element = document.getElementById(`cell-${row}-${column}`);
     element?.focus();
   }
 }

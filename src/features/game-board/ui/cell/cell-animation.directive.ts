@@ -14,7 +14,7 @@ export class CellAnimationDirective {
   readonly delayMs = input<number>(0);
   readonly isGameWon = input<boolean>(false);
   readonly row = input<number>(0);
-  readonly col = input<number>(0);
+  readonly column = input<number>(0);
   readonly gridWidth = input<number>(1);
   readonly gridHeight = input<number>(1);
 
@@ -28,6 +28,6 @@ export class CellAnimationDirective {
     const h = this.gridHeight();
     const maxDiagonal = Math.max(1, w + h - 2);
     const stepMs = WIN_WAVE_TOTAL_MS / maxDiagonal;
-    return `${(this.row() + this.col()) * stepMs}ms`;
+    return `${(this.row() + this.column()) * stepMs}ms`;
   }
 }

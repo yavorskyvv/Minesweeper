@@ -16,12 +16,6 @@ describe('GameControlsComponent', () => {
     store = TestBed.inject(MinesweeperStore);
   });
 
-  it('should create', () => {
-    const fixture = TestBed.createComponent(GameControlsComponent);
-    const component = fixture.componentInstance;
-    expect(component).toBeTruthy();
-  });
-
   it('should render difficulty buttons and reset button', () => {
     const fixture = TestBed.createComponent(GameControlsComponent);
     fixture.detectChanges();
@@ -40,9 +34,7 @@ describe('GameControlsComponent', () => {
 
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const resetButton = compiled.querySelector(
-      '[data-testid="reset-button"]',
-    ) as HTMLButtonElement;
+    const resetButton = compiled.querySelector('[data-testid="reset-button"]') as HTMLButtonElement;
 
     resetButton.click();
     fixture.detectChanges();
@@ -67,4 +59,3 @@ describe('GameControlsComponent', () => {
     expect(store.mines()).toBe(beginner.mines);
   });
 });
-

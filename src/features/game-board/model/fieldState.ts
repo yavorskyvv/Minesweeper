@@ -24,53 +24,53 @@ export const MinesweeperStore = signalStore(
   { providedIn: 'root' },
   withState(initialFieldState),
   withMethods((store) => ({
-    createField: () => {
-      patchState(store, {
-        cells: createField(store.width(), store.height(), store.mines()) as CellState[][],
-      });
-    },
-
-    triggerCell: (i: number, j: number) => {
+    triggerCell: (row: number, column: number) => {
       if (store.gameState() === 'IDLE') {
-        const field = createField(store.width(), store.height(), store.mines(), { i, j });
+        const field = createField(store.width(), store.height(), store.mines(), { row, column });
+        const cellsAfterTrigger = revealCells(field, row, column);
+
         patchState(store, {
           gameState: 'PLAYING',
-          cells: triggerCell(field, i, j),
+          cells: cellsAfterTrigger,
         });
+
+        if (checkIfGameWon(cellsAfterTrigger)) {
+          patchState(store, {
+            gameState: 'GAME_WON',
+          });
+        }
         return;
       }
 
-      if (store.cells()[i][j].isMine) {
+      if (store.cells()[row][column].isMine) {
         patchState(store, {
           gameState: 'GAME_OVER',
         });
         return;
       }
 
-      const newCells = triggerCell(store.cells(), i, j);
+      const newCells = revealCells(store.cells(), row, column);
 
       patchState(store, {
         cells: newCells,
       });
-      const isGameWon = checkIfGameWon(newCells);
 
-      if (isGameWon) {
+      if (checkIfGameWon(newCells)) {
         patchState(store, {
           gameState: 'GAME_WON',
         });
       }
     },
 
-    flagCell: (i: number, j: number) => {
+    flagCell: (row: number, column: number) => {
       const newCells = structuredClone(store.cells());
-      newCells[i][j].isFlagged = !newCells[i][j].isFlagged;
-      const isGameWon = checkIfGameWon(newCells);
+      newCells[row][column].isFlagged = !newCells[row][column].isFlagged;
 
       patchState(store, {
         cells: newCells,
       });
 
-      if (isGameWon) {
+      if (checkIfGameWon(newCells)) {
         patchState(store, {
           gameState: 'GAME_WON',
         });
@@ -98,13 +98,12 @@ export const MinesweeperStore = signalStore(
 
 function createEmptyField(width: number, height: number): CellState[][] {
   const field: CellState[][] = [];
-  for (let i = 0; i < height; i++) {
+  for (let row = 0; row < height; row++) {
     field.push([]);
-    for (let j = 0; j < width; j++) {
-      field[i].push({
-        id: `${i}:${j}`,
-        i,
-        j,
+    for (let column = 0; column < width; column++) {
+      field[row].push({
+        row,
+        column,
         isMine: false,
         isFlagged: false,
         isRevealed: false,
@@ -120,7 +119,7 @@ function createField(
   width: number,
   height: number,
   mines: number,
-  origin?: { i: number; j: number },
+  origin?: { row: number; column: number },
 ): CellState[][] {
   const field = createEmptyField(width, height);
 
@@ -130,24 +129,28 @@ function createField(
   return field;
 }
 
-function placeMines(field: CellState[][], mines: number, origin?: { i: number; j: number }): void {
+function placeMines(
+  field: CellState[][],
+  mines: number,
+  origin?: { row: number; column: number },
+): void {
   let minesLeft = mines;
   while (minesLeft > 0) {
     const row = Math.floor(Math.random() * field.length);
     const column = Math.floor(Math.random() * field[row].length);
-    const isOriginCell = origin?.i === row && origin?.j === column;
+    const isOriginCell = origin?.row === row && origin?.column === column;
     if (!field[row][column].isMine && !isOriginCell) {
       field[row][column].isMine = true;
       minesLeft--;
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) {
+      for (let dRow = -1; dRow <= 1; dRow++) {
+        for (let dColumn = -1; dColumn <= 1; dColumn++) {
           if (
-            row + i >= 0 &&
-            row + i < field.length &&
-            column + j >= 0 &&
-            column + j < field[row + i].length
+            row + dRow >= 0 &&
+            row + dRow < field.length &&
+            column + dColumn >= 0 &&
+            column + dColumn < field[row + dRow].length
           ) {
-            field[row + i][column + j].adjacentMines++;
+            field[row + dRow][column + dColumn].adjacentMines++;
           }
         }
       }
@@ -155,26 +158,26 @@ function placeMines(field: CellState[][], mines: number, origin?: { i: number; j
   }
 }
 
-function triggerCell(cells: CellState[][], i: number, j: number): CellState[][] {
-  const next = cells.map((row) => row.map((cell) => ({ ...cell })));
-  const stack = [next[i][j]];
+function revealCells(cells: CellState[][], row: number, column: number): CellState[][] {
+  const next = cells.map((cellRow) => cellRow.map((cell) => ({ ...cell })));
+  const stack = [next[row][column]];
   const visited = new Set<string>();
 
   while (stack.length > 0) {
     const popped = stack.pop()!;
-    const key = `${popped.i}:${popped.j}`;
+    const key = `${popped.row}:${popped.column}`;
     if (visited.has(key)) {
       continue;
     }
     visited.add(key);
 
     if (!popped.isRevealed) {
-      next[popped.i][popped.j] = { ...popped, isRevealed: true };
+      next[popped.row][popped.column] = { ...popped, isRevealed: true };
     }
 
-    const current = next[popped.i][popped.j];
+    const current = next[popped.row][popped.column];
     for (const neighbor of getAdjacentCells(next, current)) {
-      const neighborKey = `${neighbor.i}:${neighbor.j}`;
+      const neighborKey = `${neighbor.row}:${neighbor.column}`;
       if (!visited.has(neighborKey)) {
         stack.push(neighbor);
       }
@@ -185,32 +188,32 @@ function triggerCell(cells: CellState[][], i: number, j: number): CellState[][] 
 }
 
 function getAdjacentCells(cells: CellState[][], cell: CellState): CellState[] {
-  const res: CellState[] = [];
+  const result: CellState[] = [];
   const height = cells.length;
   const width = height > 0 ? cells[0].length : 0;
 
-  const positions = [
+  const positions: Array<[number, number]> = [
     [-1, 0],
     [0, -1],
     [1, 0],
     [0, 1],
   ];
 
-  for (const pos of positions) {
-    const nextI = cell.i + pos[0];
-    const nextJ = cell.j + pos[1];
-    if (nextI < 0 || nextI >= height || nextJ < 0 || nextJ >= width) {
+  for (const [dRow, dColumn] of positions) {
+    const nextRow = cell.row + dRow;
+    const nextColumn = cell.column + dColumn;
+    if (nextRow < 0 || nextRow >= height || nextColumn < 0 || nextColumn >= width) {
       continue;
     }
-    const candidate = cells[nextI][nextJ];
+    const candidate = cells[nextRow][nextColumn];
     if (!candidate.isMine) {
-      res.push(candidate);
+      result.push(candidate);
     }
   }
-  return res;
+  return result;
 }
 
-function checkIfGameWon(cells: CellState[][]) {
+function checkIfGameWon(cells: CellState[][]): boolean {
   return cells.every((cellRow) =>
     cellRow.every((cell) => (cell.isMine && cell.isFlagged) || cell.isRevealed),
   );

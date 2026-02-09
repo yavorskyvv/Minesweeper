@@ -1,17 +1,17 @@
 <div class="minesweeper-field" [style.--rows]="store$.height()" [style.--columns]="store$.width()">
-  @for (row of store$.cells(); track $index; let i = $index) {
-    @for (cell of row; track cell.id; let j = $index) {
+  @for (row of store$.cells(); track $index; let rowIndex = $index) {
+    @for (cell of row; track $index; let columnIndex = $index) {
       <app-cell
         [state]="cell"
         [gameState]="store$.gameState()"
         [waveOrigin]="waveOrigin()"
-        [tabIndex]="isFocused(i, j) ? 0 : -1"
+        [tabIndex]="isFocused(rowIndex, columnIndex) ? 0 : -1"
         [gridWidth]="store$.width()"
         [gridHeight]="store$.height()"
-        (cellClick)="onCellClick(i, j)"
-        (cellFlag)="onCellFlag(i, j)"
-        (cellFocus)="setFocus(i, j)"
-        (cellKey)="onCellKey(i, j, $event)"
+        (cellClick)="onCellClick(rowIndex, columnIndex)"
+        (cellFlag)="onCellFlag(rowIndex, columnIndex)"
+        (cellFocus)="setFocus(rowIndex, columnIndex)"
+        (cellKey)="onCellKey(rowIndex, columnIndex, $event)"
       />
     }
   }

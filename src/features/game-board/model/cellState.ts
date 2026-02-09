@@ -1,7 +1,6 @@
 export interface CellState {
-  id: `${number}:${number}`;
-  i: number;
-  j: number;
+  row: number;
+  column: number;
   isMine: boolean;
   isFlagged: boolean;
   isRevealed: boolean;

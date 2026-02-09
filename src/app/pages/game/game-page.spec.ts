@@ -9,12 +9,6 @@ describe('GamePageComponent', () => {
     }).compileComponents();
   });
 
-  it('should create', () => {
-    const fixture = TestBed.createComponent(GamePageComponent);
-    const component = fixture.componentInstance;
-    expect(component).toBeTruthy();
-  });
-
   it('should render game controls and field', () => {
     const fixture = TestBed.createComponent(GamePageComponent);
     fixture.detectChanges();
