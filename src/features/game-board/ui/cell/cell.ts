@@ -41,4 +41,25 @@ export class CellComponent {
   readonly cellFlag = output();
   readonly cellFocus = output();
   readonly cellKey = output<KeyboardEvent>();
+
+  /** Screen-reader label describing cell position and state. */
+  readonly ariaLabel = computed(() => {
+    const s = this.state();
+    const row = s.row + 1;
+    const col = s.column + 1;
+    const pos = `Row ${row}, column ${col}`;
+
+    if (this.isGameOver() && s.isMine) {
+      return `${pos}, mine`;
+    }
+    if (s.isRevealed) {
+      const count = s.adjacentMines;
+      const hint = count === 0 ? 'no adjacent mines' : `${count} adjacent mines`;
+      return `${pos}, revealed, ${hint}`;
+    }
+    if (s.isFlagged) {
+      return `${pos}, flagged. Press Space to remove flag`;
+    }
+    return `${pos}, unrevealed. Press Enter to reveal, Space to flag`;
+  });
 }

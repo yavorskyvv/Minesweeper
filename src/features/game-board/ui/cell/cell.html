@@ -10,6 +10,8 @@
   [gridHeight]="gridHeight()"
   [attr.id]="'cell-' + state().row + '-' + state().column"
   [attr.tabindex]="tabIndex()"
+  [attr.aria-rowindex]="state().row + 1"
+  [attr.aria-colindex]="state().column + 1"
   [class.flagged]="!state().isRevealed && !isGameOver() && state().isFlagged"
   [class.revealed]="state().isRevealed || isGameOver()"
   [class.mine]="isGameOver() && state().isMine"
@@ -18,6 +20,7 @@
   (contextmenu)="$event.preventDefault(); cellFlag.emit()"
   (focus)="cellFocus.emit()"
   (keydown)="cellKey.emit($event)"
+  [attr.aria-label]="ariaLabel()"
 >
   @if (isGameOver() && state().isMine) {
     <span class="ms-icon ms-icon--mine ms-appear" aria-hidden="true">explosion</span>

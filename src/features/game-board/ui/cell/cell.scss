@@ -84,6 +84,19 @@
     animation: msWinLift 0.25s ease-out;
     animation-delay: var(--win-wave-delay, 0s);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+
+    &.game-won {
+      animation: none;
+    }
+
+    &:focus-visible::after {
+      animation: none;
+    }
+  }
 }
 
 @keyframes pulseAnimation {
@@ -114,6 +127,11 @@
   animation: msFadeIn 0.1s ease-in-out;
   animation-delay: var(--transition-delay, 0s);
   animation-fill-mode: forwards;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 .minesweeper-cell:not(.revealed) .ms-appear {

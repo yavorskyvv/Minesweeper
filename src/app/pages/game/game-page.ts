@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ViewChild,
+  computed,
   effect,
   inject,
 } from '@angular/core';
@@ -18,6 +19,13 @@ import { MinesweeperStore } from '../../../features/game-board/model/fieldState'
   imports: [GameControlsComponent, FieldComponent, FieldViewportComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      class="game-page__sr-status"
+    >
+      {{ gameStatusMessage() }}
+    </div>
     <main class="game-page" (contextmenu)="$event.preventDefault()">
       <app-field-viewport #viewport>
         <div fieldViewportOverlay class="game-page__overlay">
@@ -47,11 +55,35 @@ import { MinesweeperStore } from '../../../features/game-board/model/fieldState'
         left: 0.5rem;
         z-index: 2;
       }
+
+      .game-page__sr-status {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
     `,
   ],
 })
 export class GamePageComponent {
   private readonly store = inject(MinesweeperStore);
+
+  /** Message announced to screen readers when game ends (win or lose). */
+  readonly gameStatusMessage = computed(() => {
+    switch (this.store.gameState()) {
+      case 'GAME_OVER':
+        return 'Game over. You hit a mine.';
+      case 'GAME_WON':
+        return 'You won!';
+      default:
+        return '';
+    }
+  });
 
   @ViewChild('viewport', { static: true })
   private readonly viewportRef!: FieldViewportComponent;

@@ -19,11 +19,9 @@ interface DifficultyOption {
           <button
             type="button"
             class="game-controls__difficulty-button"
-            [class.game-controls__difficulty-button--active]="
-              isSelectionActive() && selectedDifficultyId() === option.id
-            "
+            [class.game-controls__difficulty-button--active]="selectedDifficultyId() === option.id"
             role="radio"
-            [attr.aria-checked]="isSelectionActive() && selectedDifficultyId() === option.id"
+            [attr.aria-checked]="selectedDifficultyId() === option.id"
             [attr.aria-label]="option.label"
             [attr.data-testid]="'difficulty-' + option.id"
             (click)="onDifficultySelect(option.id)"
@@ -59,7 +57,7 @@ interface DifficultyOption {
         display: inline-flex;
         gap: 0.5rem;
         padding: 0.25rem;
-        border-radius: 999px;
+        border-radius: 4px;
         background: rgba(255, 255, 255, 0.75);
         border: 1px solid var(--ms-border);
       }
@@ -67,7 +65,7 @@ interface DifficultyOption {
       .game-controls__difficulty-button {
         width: 2.5rem;
         height: 2.5rem;
-        border-radius: 999px;
+        border-radius: 4px;
         border: 1px solid transparent;
         background: transparent;
         display: inline-flex;
@@ -162,8 +160,6 @@ export class GameControlsComponent {
 
     return null;
   });
-
-  readonly isSelectionActive = computed(() => this.store.gameState() === 'IDLE');
 
   onDifficultySelect(value: DifficultyId) {
     const config = DIFFICULTY_CONFIGS[value];
