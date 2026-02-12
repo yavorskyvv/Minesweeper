@@ -33,11 +33,7 @@ export function createField(
   return field;
 }
 
-export function revealCells(
-  cells: CellState[][],
-  row: number,
-  column: number,
-): CellState[][] {
+export function revealCells(cells: CellState[][], row: number, column: number): CellState[][] {
   const next = structuredClone(cells);
 
   if (cells[row][column].adjacentMines !== 0) {
@@ -124,11 +120,7 @@ function pickClusterCenters(
   return centers;
 }
 
-function placeOneMine(
-  field: CellState[][],
-  row: number,
-  column: number,
-): void {
+function placeOneMine(field: CellState[][], row: number, column: number): void {
   field[row][column].isMine = true;
   for (let dRow = -1; dRow <= 1; dRow++) {
     for (let dColumn = -1; dColumn <= 1; dColumn++) {
@@ -152,9 +144,7 @@ function placeMines(
   const height = field.length;
   const width = height > 0 ? field[0].length : 0;
   const forbidden =
-    origin != null
-      ? getFirstClickForbiddenCoordinates(height, width, origin)
-      : new Set<string>();
+    origin != null ? getFirstClickForbiddenCoordinates(height, width, origin) : new Set<string>();
 
   const centers = pickClusterCenters(height, width, mines);
 
@@ -166,8 +156,7 @@ function placeMines(
 
     do {
       const center = centers[Math.floor(Math.random() * centers.length)];
-      const dRow =
-        Math.floor(Math.random() * (2 * MINE_CLUSTER_RADIUS + 1)) - MINE_CLUSTER_RADIUS;
+      const dRow = Math.floor(Math.random() * (2 * MINE_CLUSTER_RADIUS + 1)) - MINE_CLUSTER_RADIUS;
       const dColumn =
         Math.floor(Math.random() * (2 * MINE_CLUSTER_RADIUS + 1)) - MINE_CLUSTER_RADIUS;
       row = Math.max(0, Math.min(height - 1, center.row + dRow));
@@ -197,22 +186,20 @@ function getAdjacentCells(cells: CellState[][], cell: CellState): CellState[] {
   const height = cells.length;
   const width = height > 0 ? cells[0].length : 0;
 
-  const positions: Array<[number, number]> = [
-    [-1, 0],
-    [0, -1],
-    [1, 0],
-    [0, 1],
-  ];
-
-  for (const [dRow, dColumn] of positions) {
-    const nextRow = cell.row + dRow;
-    const nextColumn = cell.column + dColumn;
-    if (nextRow < 0 || nextRow >= height || nextColumn < 0 || nextColumn >= width) {
-      continue;
-    }
-    const candidate = cells[nextRow][nextColumn];
-    if (!candidate.isMine) {
-      result.push(candidate);
+  for (let dRow = -1; dRow <= 1; dRow++) {
+    for (let dColumn = -1; dColumn <= 1; dColumn++) {
+      const nextRow = cell.row + dRow;
+      const nextColumn = cell.column + dColumn;
+      if (nextRow < 0 || nextRow >= height || nextColumn < 0 || nextColumn >= width) {
+        continue;
+      }
+      if (dRow === 0 && dColumn === 0) {
+        continue;
+      }
+      const candidate = cells[nextRow][nextColumn];
+      if (!candidate.isMine) {
+        result.push(candidate);
+      }
     }
   }
   return result;
