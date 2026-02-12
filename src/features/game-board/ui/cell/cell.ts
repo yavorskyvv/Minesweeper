@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   input,
-  linkedSignal,
   output,
 } from '@angular/core';
 import { CellState, GameState } from '../../model';
@@ -26,16 +25,6 @@ export class CellComponent {
   readonly tabIndex = input<number>(-1);
   readonly gridWidth = input<number>(1);
   readonly gridHeight = input<number>(1);
-
-  readonly delayMs = linkedSignal(() => {
-    const row = this.state().row;
-    const column = this.state().column;
-
-    const originRow = this.waveOrigin()?.row ?? row;
-    const originColumn = this.waveOrigin()?.column ?? column;
-
-    return (Math.abs(row - originRow) + Math.abs(column - originColumn)) * 100;
-  });
 
   readonly cellClick = output();
   readonly cellFlag = output();
