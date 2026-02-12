@@ -14,7 +14,7 @@
   line-height: 1;
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
-  transform: translateY(var(--elevation-offset));
+  transform: translateY(var(--elevation-offset)) translateZ(0);
   transition:
     transform 0.3s ease-in-out var(--transition-delay, 0s),
     background-color 0.3s ease-in-out var(--transition-delay, 0s),
@@ -141,13 +141,13 @@
 
 @keyframes msWinLift {
   0% {
-    transform: translateY(var(--elevation-offset));
+    transform: translateY(var(--elevation-offset)) translateZ(0);
   }
   50% {
-    transform: translateY(calc(var(--elevation-offset) - 4px));
+    transform: translateY(calc(var(--elevation-offset) - 4px)) translateZ(0);
   }
   100% {
-    transform: translateY(var(--elevation-offset));
+    transform: translateY(var(--elevation-offset)) translateZ(0);
   }
 }
 
