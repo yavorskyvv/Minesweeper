@@ -18,7 +18,7 @@ export const DIFFICULTY_CONFIGS: Record<DifficultyId, GameConfig> = {
       width: 8,
       height: 8,
     },
-    mines: Math.ceil(0.2 * 8 * 8),
+    mines: Math.ceil(0.1 * 8 * 8),
   },
   intermediate: {
     size: {
