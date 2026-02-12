@@ -13,6 +13,7 @@
   font-synthesis: weight;
   line-height: 1;
   cursor: pointer;
+  -webkit-font-smoothing: antialiased;
   transform: translateY(var(--elevation-offset));
   transition:
     transform 0.3s ease-in-out var(--transition-delay, 0s),

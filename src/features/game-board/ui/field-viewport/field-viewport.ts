@@ -65,6 +65,7 @@ const WHEEL_ZOOM_SENSITIVITY = 0.0015;
         display: inline-block;
         transform-origin: top left;
         will-change: transform;
+        backface-visibility: hidden;
       }
     `,
   ],
@@ -82,7 +83,7 @@ export class FieldViewportComponent implements OnInit, OnDestroy {
 
   readonly transformStyle = computed(() => {
     const { x, y } = this.pan();
-    const zoom = this.zoom();
+    const zoom = Math.round(this.zoom() * 100) / 100;
     return `translate3d(${x}px, ${y}px, 0) scale(${zoom})`;
   });
 
