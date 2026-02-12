@@ -10,7 +10,7 @@ export interface GameConfig {
 
 const DEFAULT_WIDTH = 10;
 const DEFAULT_HEIGHT = 10;
-const DEFAULT_MINES = Math.ceil(0.4 * DEFAULT_WIDTH * DEFAULT_HEIGHT);
+const DEFAULT_MINES = Math.ceil(0.2 * DEFAULT_WIDTH * DEFAULT_HEIGHT);
 
 export const DIFFICULTY_CONFIGS: Record<DifficultyId, GameConfig> = {
   beginner: {
@@ -18,7 +18,7 @@ export const DIFFICULTY_CONFIGS: Record<DifficultyId, GameConfig> = {
       width: 8,
       height: 8,
     },
-    mines: 10,
+    mines: Math.ceil(0.2 * 8 * 8),
   },
   intermediate: {
     size: {
@@ -32,7 +32,7 @@ export const DIFFICULTY_CONFIGS: Record<DifficultyId, GameConfig> = {
       width: 16,
       height: 16,
     },
-    mines: Math.ceil(0.5 * 16 * 16),
+    mines: Math.ceil(0.2 * 16 * 16),
   },
 };
 

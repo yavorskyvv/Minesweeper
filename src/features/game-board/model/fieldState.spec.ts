@@ -37,4 +37,14 @@ describe('MinesweeperStore', () => {
     expect(store.cells().length).toBe(8);
     expect(store.cells()[0].length).toBe(8);
   });
+
+  it('first click should always be on a cell with 0 adjacent mines', () => {
+    store.setConfig(8, 8, 10);
+
+    store.triggerCell(0, 0);
+
+    const firstCell = store.cells()[0][0];
+    expect(firstCell.isRevealed).toBe(true);
+    expect(firstCell.adjacentMines).toBe(0);
+  });
 });
